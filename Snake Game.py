@@ -120,7 +120,7 @@ screen.colormode(255)  # Modo de cor RGB
 # Cor da Cobra
 pen = turtle.Turtle("square")
 pen.penup()
-pen.pencolor("yellow")
+pen.fillcolor("gold")
 
 # Comida
 food = turtle.Turtle()
