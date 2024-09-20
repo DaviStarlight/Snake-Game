@@ -14,9 +14,11 @@ offsets = {
     "right": (20, 0)
 }
 
+highscore = 0  # Armazenar o highscore
+
 def reset():
     global snake, snake_direction, food_pos, pen, score, game_running
-    game_running = True  # Controla o estado do jogo
+    game_running = True  # Para controlar o estado do jogo
     snake = [[0, 0], [0, 20], [0, 40], [0, 50], [0, 60]]
     snake_direction = "up"
     food_pos = get_random_food_pos()
@@ -121,17 +123,24 @@ def change_food_color():
 # Atualiza a pontuação na tela
 def update_score():
     score_pen.clear()
-    score_pen.write(f"Pontuação: {score}", align="center", font=("Arial", 16, "bold"))
+    score_pen.write(f"Pontuação: {score}  Recorde: {highscore}", align="center", font=("Arial", 16, "bold"))
 
 # Função para mostrar "Game Over"
 def game_over():
-    global game_running
+    global game_running, highscore
     game_running = False  # Interrompe o movimento da cobra
     pen.clearstamps()  # Limpa o desenho da cobra
     pen.goto(0, 0)
-    pen.write("GAME OVER", align="center", font=("Arial", 24, "bold"))
+
+    # Atualiza o highscore
+    if score > highscore:
+        highscore = score
+
+    pen.write(f"GAME OVER\nPontuação: {score}\Recorde: {highscore}\nPressione 'R' para Reiniciar", align="center", font=("Arial", 24, "bold"))
     screen.update()
-    turtle.ontimer(reset, 3000)  # Reinicia o jogo após 3 segundos
+
+def retry():
+    reset()  # Reinicia o jogo
 
 # Tela
 screen = turtle.Screen()
@@ -168,6 +177,7 @@ screen.onkey(go_up, "Up")
 screen.onkey(go_right, "Right")
 screen.onkey(go_down, "Down")
 screen.onkey(go_left, "Left")
+screen.onkey(retry, "r")  # Pressione 'R' para retry
 
 # Bora lá!
 reset()
