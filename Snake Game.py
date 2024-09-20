@@ -15,15 +15,21 @@ offsets = {
 }
 
 def reset():
-    global snake, snake_direction, food_pos, pen
+    global snake, snake_direction, food_pos, pen, score, game_running
+    game_running = True  # Controla o estado do jogo
     snake = [[0, 0], [0, 20], [0, 40], [0, 50], [0, 60]]
     snake_direction = "up"
     food_pos = get_random_food_pos()
     food.goto(food_pos)
+    score = 0  # Reinicia a pontuação
+    update_score()  # Atualiza o score na tela
     move_snake()
 
 def move_snake():
-    global snake_direction
+    global snake_direction, game_running
+
+    if not game_running:
+        return  # Para o movimento se o jogo acabou
 
     # Próxima posição para cabeça da cobra.
     new_head = snake[-1].copy()
@@ -32,7 +38,8 @@ def move_snake():
 
     # Checa a colisão própria.
     if new_head in snake[:-1]:
-        reset()
+        game_over()
+        return
     else:
         snake.append(new_head)
         if not food_collision():
@@ -63,11 +70,13 @@ def move_snake():
         turtle.ontimer(move_snake, DELAY)
 
 def food_collision():
-    global food_pos
+    global food_pos, score
     if get_distance(snake[-1], food_pos) < 20:
         food_pos = get_random_food_pos()
         food.goto(food_pos)
         change_food_color()  # Muda a cor da comida quando ela respawnar
+        score += 10  # Incrementa a pontuação
+        update_score()  # Atualiza o score na tela
         return True
     return False
 
@@ -109,6 +118,21 @@ def change_food_color():
     b = random.randint(0, 255)
     food.color(r, g, b)
 
+# Atualiza a pontuação na tela
+def update_score():
+    score_pen.clear()
+    score_pen.write(f"Pontuação: {score}", align="center", font=("Arial", 16, "bold"))
+
+# Função para mostrar "Game Over"
+def game_over():
+    global game_running
+    game_running = False  # Interrompe o movimento da cobra
+    pen.clearstamps()  # Limpa o desenho da cobra
+    pen.goto(0, 0)
+    pen.write("GAME OVER", align="center", font=("Arial", 24, "bold"))
+    screen.update()
+    turtle.ontimer(reset, 3000)  # Reinicia o jogo após 3 segundos
+
 # Tela
 screen = turtle.Screen()
 screen.setup(WIDTH, HEIGHT)
@@ -128,6 +152,15 @@ food.shape("circle")
 food.color("red")
 food.shapesize(FOOD_SIZE / 20)
 food.penup()
+
+# Score display
+score = 0
+score_pen = turtle.Turtle()
+score_pen.hideturtle()
+score_pen.penup()
+score_pen.color("white")
+score_pen.goto(0, HEIGHT // 2 - 40)
+update_score()
 
 # Manipuladores de Eventos
 screen.listen()
