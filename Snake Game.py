@@ -24,8 +24,10 @@ def reset():
     food_pos = get_random_food_pos()
     food.goto(food_pos)
     score = 0  # Reinicia a pontuação
+    pen.clear()  # Limpa qualquer texto anterior
+    pen.color("gold")  # Redefine a cor da cobra para o padrão
     update_score()  # Atualiza o score na tela
-    move_snake()
+    move_snake()  # Começa o movimento da cobra
 
 def move_snake():
     global snake_direction, game_running
@@ -136,8 +138,9 @@ def game_over():
     if score > highscore:
         highscore = score
 
-    pen.write(f"GAME OVER\nPontuação: {score}\Recorde: {highscore}\nPressione 'R' para Reiniciar", align="center", font=("Arial", 24, "bold"))
-    screen.update()
+    pen.color("white")  # Muda a cor da mensagem para branca
+    pen.write(f"FIM DE JOGO\nPontuação: {score}\nRecorde: {highscore}\nPressione 'R' para Reiniciar", align="center", font=("Arial", 24, "bold"))
+    # screen.update()
 
 def retry():
     reset()  # Reinicia o jogo
